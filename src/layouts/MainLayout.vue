@@ -7,7 +7,13 @@
         <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title class="text-weight-bold">
-          Home
+          <span class="gt-sm">Home</span>
+          <q-icon 
+            class="header-icon q-pa-md lt-md"
+            name="fas fa-dove"
+            size="sm"
+            color="primary"
+          />
         </q-toolbar-title>
 
       </q-toolbar>
@@ -136,3 +142,11 @@ export default {
   }
 }
 </script>
+
+<style lang="sass">
+.header-icon
+  position: absolute
+  bottom: 0
+  left: 50%
+  transform: translateX(-50%)
+</style>
