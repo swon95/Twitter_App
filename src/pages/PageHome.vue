@@ -34,12 +34,47 @@
       </div>
     </div>
 
+    <!-- 영역 구분 -->
     <q-separator 
       class="divider" 
       color="grey-2" 
       size="10px" 
     />
-    
+
+    <q-list class="q-py-md">
+      <q-item clickable v-ripple>
+        <q-item-section avatar top>
+          <q-avatar>
+            <img src="https://cdn.quasar.dev/img/avatar2.jpg">
+          </q-avatar>
+        </q-item-section>
+
+        <q-item-section>
+          <q-item-label class="text-subtitle1">
+            <strong>New User !</strong>
+            <span class="text-grey-7"> @새로운 사용자</span>
+          </q-item-label>
+          <q-item-label>
+            <span class="text-weight-bold">Janet</span>
+            <p class="tweet-content">I'll be in your neighborhood doing errands this
+            weekend. Do you want to grab brunch?</p>
+
+            <div class="tweet-icons row justify-between">
+              <q-btn flat round size="sm" color="grey" icon="far fa-comment" />
+              <q-btn flat round size="sm" color="grey" icon="fas fa-retweet" />
+              <q-btn flat round size="sm" color="grey" icon="far fa-heart" />
+              <q-btn flat round size="sm" color="grey" icon="fas fa-trash" />
+            </div>
+          
+          </q-item-label>
+        </q-item-section>
+
+        <q-item-section side top>
+          1 min ago
+        </q-item-section>
+      </q-item>
+    </q-list>
+
   </q-page>
 </template>
 
@@ -66,4 +101,10 @@ export default defineComponent({
   border-top: 1px solid
   border-bottom: 1px solid
   border-color: $grey-4
+
+.tweet-content
+  padding-top: 5px
+
+.tweet-icons
+  margin-left: -5px
 </style>
