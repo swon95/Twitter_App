@@ -7,7 +7,7 @@
         <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title class="text-weight-bold">
-          <span class="gt-sm">Home</span>
+          <span class="gt-sm">{{ $route.name }}</span>
           <q-icon 
             class="header-icon q-pa-md lt-md"
             name="fas fa-dove"
@@ -38,7 +38,7 @@
       <q-list>
       
       <!-- 루트 경로로 지정 => / -->
-      <q-item to="/" clickable v-ripple>
+      <q-item to="/" clickable v-ripple exact>
         <q-item-section avatar>
           <q-icon name="home" size="md"/>
         </q-item-section>
