@@ -41,10 +41,12 @@
       size="10px" 
     />
 
-    <q-list class="q-py-md">
-      <q-item clickable v-ripple>
+    <q-list >
+      <!-- v-for (루프) 메소드를 통해 페이지에 데이터를 뿌려줌 -->
+      <!-- 현재 date 를 key 로 -->
+      <q-item class="q-py-md" v-for="twitter in twitters" :key="twitter.date">
         <q-item-section avatar top>
-          <q-avatar>
+          <q-avatar size="xl">
             <img src="https://cdn.quasar.dev/img/avatar2.jpg">
           </q-avatar>
         </q-item-section>
@@ -54,23 +56,20 @@
             <strong>New User !</strong>
             <span class="text-grey-7"> @새로운 사용자</span>
           </q-item-label>
-          <q-item-label>
-            <span class="text-weight-bold">Janet</span>
-            <p class="tweet-content">I'll be in your neighborhood doing errands this
-            weekend. Do you want to grab brunch?</p>
-
-            <div class="tweet-icons row justify-between">
-              <q-btn flat round size="sm" color="grey" icon="far fa-comment" />
-              <q-btn flat round size="sm" color="grey" icon="fas fa-retweet" />
-              <q-btn flat round size="sm" color="grey" icon="far fa-heart" />
-              <q-btn flat round size="sm" color="grey" icon="fas fa-trash" />
-            </div>
-          
+          <q-item-label class="twitter-content text-body1">
+            {{  twitter.content }}
           </q-item-label>
+
+          <div class="tweet-icons row justify-between">
+            <q-btn flat round size="sm" color="grey" icon="far fa-comment" />
+            <q-btn flat round size="sm" color="grey" icon="fas fa-retweet" />
+            <q-btn flat round size="sm" color="grey" icon="far fa-heart" />
+            <q-btn flat round size="sm" color="grey" icon="fas fa-trash" />
+          </div>          
         </q-item-section>
 
         <q-item-section side top>
-          1 min ago
+          {{ twitter.date | relativeDate }}
         </q-item-section>
       </q-item>
     </q-list>
@@ -80,15 +79,31 @@
 
 <script>
 import { defineComponent } from 'vue'
+import { formatDistance } from 'date-fns'
 
-export default defineComponent({
+export default {
   name: 'PageHome',
   data() {
     return {
-      newTwitterContent: ''
+      newTwitterContent: '',
+      twitters: [
+        {
+          content: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur, culpa suscipit iure nostrum odio reprehenderit doloremque, at iusto minus expedita facilis molestiae, labore repudiandae tempore excepturi officiis obcaecati ex!',
+          date: 1688484760117
+        },
+        {
+          content: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur, culpa suscipit iure nostrum odio reprehenderit doloremque, at iusto minus expedita facilis molestiae, labore repudiandae tempore excepturi officiis obcaecati ex!',
+          date: 1688484937176
+        }
+      ]
     }
-  }
-})
+  },
+  filters: {
+    relativeDate(value) {
+      return formatDistance(value, new Date())
+    }
+  },
+}
 </script>
 
 <style lang="sass">
