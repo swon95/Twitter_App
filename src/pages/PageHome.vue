@@ -22,7 +22,9 @@
       </div>
       
       <div class="col col-shrink">
+        <!-- @click => 클릭이벤트 추가 -->
         <q-btn
+          @click="addNewTweet"
           class="q-mb-lg"
           :disabled="!newTwitterContent"
           unelevated 
@@ -103,6 +105,17 @@ export default {
       return formatDistance(value, new Date())
     }
   },
+  // 새로운 게시글(Tweet) 추가
+  methods: {
+    addNewTweet() {
+      // console.log('a')
+      let newTweet = {
+        content: this.newTwitterContent,
+        date: Date.now()
+      }
+      this.twitters.unshift(newTweet) // push, unshift
+    }  
+  }
 }
 </script>
 
