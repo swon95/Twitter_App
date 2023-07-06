@@ -97,7 +97,7 @@
 import { defineComponent } from 'vue'
 import { formatDistance } from 'date-fns'
 import db from 'src/boot/firebase'
-import { collection, onSnapshot, query } from 'firebase/firestore'
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore'
 
 export default defineComponent({
   name: 'PageHome',
@@ -147,20 +147,23 @@ export default defineComponent({
         // onSnapshot 메서드를 변경 시 모든 데이터의 snapShot 반환
         // db.collection('qweets')
         const qweetsCollection = collection(db, 'qweets');
-        const qweetsQuery = query(qweetsCollection);
+        // firebase 쿼리(orderBy method)를 사용하여 오름차순(ascending)으로 정렬 // 내림차순 desc (descending)
+        const qweetsQuery = query(qweetsCollection, orderBy('date', 'asc'));
 
         // qweetsCollection.onSnapshot(function(snapshot) 
-        onSnapshot(qweetsQuery, function(snapshot) {
+        onSnapshot(qweetsQuery, (snapshot) => {
             // 변경사항을 아래 타입으로 가져옴
-            snapshot.docChanges().forEach(function(change) {
+            snapshot.docChanges().forEach((change) => {
+              const qweetChange = change.doc.data()
               if (change.type === "added") {
-                console.log("New qweet: ", change.doc.data());
+                console.log("New qweet: ", qweetChange);
+                this.qweets.unshift(qweetChange)
               }
               if (change.type === "modified") {
-                  console.log("Modified qweet: ", change.doc.data());
+                  console.log("Modified qweet: ", qweetChange);
               }
               if (change.type === "removed") {
-                  console.log("Removed qweet: ", change.doc.data());
+                  console.log("Removed qweet: ", qweetChange);
               }
       })
     })
