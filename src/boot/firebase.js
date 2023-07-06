@@ -11,7 +11,10 @@ const firebaseConfig = {
   appId: "1:321818273135:web:53e695ea70c2e139c5b49a",
 };
 
+// Firebase 초기화
 const app = initializeApp(firebaseConfig);
+
+// Firestore 인스턴스 생성
 const db = getFirestore(app);
 
 export default db;

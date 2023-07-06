@@ -96,8 +96,10 @@
 <script>
 import { defineComponent } from 'vue'
 import { formatDistance } from 'date-fns'
+import db from 'src/boot/firebase'
+import { collection, onSnapshot, query } from 'firebase/firestore'
 
-export default {
+export default defineComponent({
   name: 'PageHome',
   data() {
     return {
@@ -140,8 +142,30 @@ export default {
       // splice 함수를 사용하여 배열에서 1개 제거
       this.qweets.splice(index, 1)
     }  
+  },
+  mounted() {
+        // onSnapshot 메서드를 변경 시 모든 데이터의 snapShot 반환
+        // db.collection('qweets')
+        const qweetsCollection = collection(db, 'qweets');
+        const qweetsQuery = query(qweetsCollection);
+
+        // qweetsCollection.onSnapshot(function(snapshot) 
+        onSnapshot(qweetsQuery, function(snapshot) {
+            // 변경사항을 아래 타입으로 가져옴
+            snapshot.docChanges().forEach(function(change) {
+              if (change.type === "added") {
+                console.log("New qweet: ", change.doc.data());
+              }
+              if (change.type === "modified") {
+                  console.log("Modified qweet: ", change.doc.data());
+              }
+              if (change.type === "removed") {
+                  console.log("Removed qweet: ", change.doc.data());
+              }
+      })
+    })
   }
-}
+})
 </script>
 
 <style lang="sass">
