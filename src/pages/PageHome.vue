@@ -54,7 +54,7 @@
         <q-item
          class="qweet q-py-md" 
          v-for="qweet in qweets" 
-         :key="qweet.date"
+         :key="qweet.id" 
          >
           <q-item-section avatar top>
             <q-avatar size="xl">
@@ -97,7 +97,7 @@
 import { defineComponent } from 'vue'
 import { formatDistance } from 'date-fns'
 import db from 'src/boot/firebase'
-import { collection, onSnapshot, query, orderBy } from 'firebase/firestore'
+import { collection, onSnapshot, query, orderBy, addDoc, deleteDoc, doc } from 'firebase/firestore'
 
 export default defineComponent({
   name: 'PageHome',
@@ -105,14 +105,14 @@ export default defineComponent({
     return {
       newQweetContent: '',
       qweets: [
-        {
-          content: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur, culpa suscipit iure nostrum odio reprehenderit doloremque, at iusto minus expedita facilis molestiae, labore repudiandae tempore excepturi officiis obcaecati ex!',
-          date: 1688484760117
-        },
-        {
-          content: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur, culpa suscipit iure nostrum odio reprehenderit doloremque, at iusto minus expedita facilis molestiae, labore repudiandae tempore excepturi officiis obcaecati ex!',
-          date: 1688484937176
-        }
+        // {
+        //   content: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur, culpa suscipit iure nostrum odio reprehenderit doloremque, at iusto minus expedita facilis molestiae, labore repudiandae tempore excepturi officiis obcaecati ex!',
+        //   date: 1688484760117
+        // },
+        // {
+        //   content: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur, culpa suscipit iure nostrum odio reprehenderit doloremque, at iusto minus expedita facilis molestiae, labore repudiandae tempore excepturi officiis obcaecati ex!',
+        //   date: 1688484937176
+        // }
       ]
     }
   },
@@ -129,18 +129,47 @@ export default defineComponent({
         content: this.newQweetContent,
         date: Date.now()
       }
-      this.qweets.unshift(newQweet) // push, unshift
+      // 로컬에 새로운 글 작성 시 보여주기
+      // this.qweets.unshift(newQweet) // push, unshift
+      // 글 작성 시 Firebase 에 실시간으로 추가
+      const FireCollection = collection(db, 'qweets');
+      // db.collection('qweets').add(newQweet)
+      addDoc(FireCollection, newQweet)
+      .then(function(docRef) {
+        console.log('Document written with ID: ', docRef.id)
+      })
+      .catch(function(error) {
+        console.error('Error adding document: ', error)
+      })
       this.newQweetContent = ''
     },
     deleteQweet(qweet) {
-      // console.log('Delete Tweet: ', qweet)
-      // 글이 작성된 시간을 기준으로
-      const dateToDelete = qweet.date
-      // 몇번째 인덱스인지 배열에서 탐색
-      const index = this.qweets.findIndex(qweet => qweet.date === dateToDelete)
-      // console.log('index : ', index)
-      // splice 함수를 사용하여 배열에서 1개 제거
-      this.qweets.splice(index, 1)
+      // // console.log('Delete Tweet: ', qweet)
+      // // 글이 작성된 시간을 기준으로
+      // const dateToDelete = qweet.date
+      // // 몇번째 인덱스인지 배열에서 탐색
+      // const index = this.qweets.findIndex(qweet => qweet.date === dateToDelete)
+      // // console.log('index : ', index)
+      // // splice 함수를 사용하여 배열에서 1개 제거
+      // this.qweets.splice(index, 1)
+
+      // firebase Collection 에서 
+      const qweetsCollection = collection(db, 'qweets');
+      const docRef = doc(qweetsCollection, qweet.id);
+
+      // db.collection('qweets').doc(qweet.id).delete()
+      deleteDoc(docRef)
+        .then(() => {
+          console.log('document successfully deleted!!')
+          // 배열에서 해당 qweet 제거
+          const index = this.qweets.findIndex(item => item.id === qweet.id)
+          if (index !== -1) {
+            this.qweets.splice(index, 1)
+          }
+        })
+      .catch(function(error) {
+        console.log('Error removing document: ', error)
+      })
     }  
   },
   mounted() {
@@ -149,12 +178,16 @@ export default defineComponent({
         const qweetsCollection = collection(db, 'qweets');
         // firebase 쿼리(orderBy method)를 사용하여 오름차순(ascending)으로 정렬 // 내림차순 desc (descending)
         const qweetsQuery = query(qweetsCollection, orderBy('date', 'asc'));
-
+        
         // qweetsCollection.onSnapshot(function(snapshot) 
         onSnapshot(qweetsQuery, (snapshot) => {
             // 변경사항을 아래 타입으로 가져옴
             snapshot.docChanges().forEach((change) => {
-              const qweetChange = change.doc.data()
+              const qweetChange = { 
+                id: change.doc.id, 
+                ...change.doc.data()
+              }
+
               if (change.type === "added") {
                 console.log("New qweet: ", qweetChange);
                 this.qweets.unshift(qweetChange)
@@ -164,6 +197,12 @@ export default defineComponent({
               }
               if (change.type === "removed") {
                   console.log("Removed qweet: ", qweetChange);
+                  // firebase doc delete
+                  let index = 
+                  // findIndex 함수를 통해 qweet id 와 qweetChange id 가 일치한다면
+                  this.qweets.findIndex(qweet => qweet.id === qweetChange.id)
+                  // qweets 의 index 에서 1개의 요소를 제거
+                  this.qweets.splice(index, 1)
               }
       })
     })
