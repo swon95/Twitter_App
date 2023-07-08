@@ -78,7 +78,14 @@
             <div class="qweet-icons row justify-between">
               <q-btn flat round size="sm" color="grey" icon="far fa-comment" />
               <q-btn flat round size="sm" color="grey" icon="fas fa-retweet" />
-              <q-btn flat round size="sm" color="grey" icon="far fa-heart" />
+              <q-btn 
+                flat 
+                round 
+                size="sm" 
+                @click="toggledLiked(qweet)"
+                :color="qweet.liked ? 'pink' : 'grey'" 
+                :icon="qweet.liked ? 'fas fa-heart' : 'far fa-heart'" 
+                />
               <q-btn @click="deleteQweet(qweet)" flat round size="sm" color="grey" icon="fas fa-trash" />
             </div>          
           </q-item-section>
@@ -97,7 +104,7 @@
 import { defineComponent } from 'vue'
 import { formatDistance } from 'date-fns'
 import db from 'src/boot/firebase'
-import { collection, onSnapshot, query, orderBy, addDoc, deleteDoc, doc } from 'firebase/firestore'
+import { collection, onSnapshot, query, orderBy, addDoc, deleteDoc, doc, getDoc, updateDoc  } from 'firebase/firestore'
 
 export default defineComponent({
   name: 'PageHome',
@@ -106,12 +113,17 @@ export default defineComponent({
       newQweetContent: '',
       qweets: [
         // {
+        //   id: 'ID1',
         //   content: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur, culpa suscipit iure nostrum odio reprehenderit doloremque, at iusto minus expedita facilis molestiae, labore repudiandae tempore excepturi officiis obcaecati ex!',
-        //   date: 1688484760117
+        //   date: 1688484760117,
+        //   // 좋아요 기능 추가
+        //   liked: false
         // },
         // {
+        //   id: 'ID2',
         //   content: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Autem consectetur, culpa suscipit iure nostrum odio reprehenderit doloremque, at iusto minus expedita facilis molestiae, labore repudiandae tempore excepturi officiis obcaecati ex!',
-        //   date: 1688484937176
+        //   date: 1688484937176,
+        //   liked: true
         // }
       ]
     }
@@ -127,7 +139,9 @@ export default defineComponent({
       // console.log('a')
       let newQweet = {
         content: this.newQweetContent,
-        date: Date.now()
+        date: Date.now(),
+        // firebase doc 에 필드 추가
+        liked: false
       }
       // 로컬에 새로운 글 작성 시 보여주기
       // this.qweets.unshift(newQweet) // push, unshift
@@ -170,7 +184,56 @@ export default defineComponent({
       .catch(function(error) {
         console.log('Error removing document: ', error)
       })
-    }  
+    },
+    toggledLiked(qweet) {
+      // console.log('toggleLiked')
+      // qweet 을 console 에 출력하여 id 값을 확인
+      // console.log(qweet)
+      // var washingtonRef = dv.collection('cities').doc('DC')
+
+      // // Set the "ccapital" field of the city 'DC'
+      // return washingtonRef.update({
+      //   capital: true
+      // })
+      // .then(function() {
+      //   console.log("Document successfully updated!")
+      // })
+      // .catch(function() {
+      //   // The document probablay doesn't exist.
+      //   console.error("Error updating document: ", error)
+      // })
+
+      const qweetsCollection = collection(db, 'qweets');
+      const docRef = doc(qweetsCollection, qweet.id);
+
+      // Firestore에서 해당 문서를 가져옴
+      getDoc(docRef)
+        .then((doc) => {
+          if (doc.exists()) {
+            // 현재 좋아요 상태를 가져옴
+            const currentLiked = doc.data().liked;
+            // 좋아요 상태를 토글
+            const updatedLiked = !currentLiked;
+          
+            // Firestore에서 문서를 업데이트
+            updateDoc(docRef, { liked: updatedLiked })
+              .then(() => {
+                console.log('Document successfully updated!');
+                // 배열에서 해당 qweet의 좋아요 상태 업데이트
+                const index = this.qweets.findIndex((item) => item.id === qweet.id);
+                if (index !== -1) {
+                  this.qweets[index].liked = updatedLiked;
+                }
+              })
+              .catch((error) => {
+                console.error('Error updating document: ', error);
+              });
+          }
+        })
+        .catch((error) => {
+          console.error('Error getting document: ', error);
+        });
+    }
   },
   mounted() {
         // onSnapshot 메서드를 변경 시 모든 데이터의 snapShot 반환
@@ -194,7 +257,10 @@ export default defineComponent({
               }
               if (change.type === "modified") {
                   console.log("Modified qweet: ", qweetChange);
-              }
+                  let index = 
+                  this.qweets.findIndex(qweet => qweet.id === qweetChange.id)
+                  Object.assign(this.qweets[index], qweetChange)
+                }
               if (change.type === "removed") {
                   console.log("Removed qweet: ", qweetChange);
                   // firebase doc delete
