@@ -114,7 +114,11 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <!-- keep-alive => 컴포넌트의 상태를 캐싱하여 재렌더링을 방지 -->
+      <!-- 랜더링 시 firebase 모든 문서를 계속해서 가져오지 않게 -->
+      <keep-alive>
+        <router-view />
+      </keep-alive>
     </q-page-container>
 
   </q-layout>
