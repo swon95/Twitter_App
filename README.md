@@ -1,3 +1,7 @@
+## Toy 프로젝트 🏃
+
+---
+
 ## 🐦 Twitter
 
 해당 서비스는 Twitter 를 클론한 프로젝트로<br>
@@ -68,7 +72,7 @@ Twitter 앱을 클론 해 보는 Toy Project 를 진행했습니다.<br>
 
 ---
 
-#### 아쉬웠던 점 & 보완해야 할 사항
+#### 아쉬웠던 점 & 보완해야 할 사항 📣
 
 **DateTime**
 
@@ -76,11 +80,16 @@ Twitter 앱을 클론 해 보는 Toy Project 를 진행했습니다.<br>
 `"3 minute ago"` 형태로 구현하려 했지만<br>
 생각한대로 잘 되지 않아 추후 개선해야 할 부분으로 남겨두었습니다.<br>
 <br>
+
 **Authentication**
+
 유저들의 DB 를 관리하기 위하여<br>
 회원가입 및 로그인기능을 추가할 계획을 갖고있습니다.<br>
 사용자의 편의를 위하여 소셜 로그인 기능을 추가하려고 합니다.
-<Br><Br>
+<br>
+
+**BlockChain**
+
 추가로 블록체인의 개념을 적용하여<br>
 온체인 데이터가 사용되는 부분을 추가할 계획을 갖고 있습니다.
 
@@ -88,4 +97,4 @@ Twitter 앱을 클론 해 보는 Toy Project 를 진행했습니다.<br>
 
 ### Reference 🌊
 
-> <https://youtu.be/la-0ulfn0_M<br><br><https://date-fns.org/><br><https://firebase.google.com/docs/firestore/using-console?hl=ko&authuser=0><br><https://about.instagram.com/ko-kr/blog/announcements/introducing-threads-app>
+> <https://youtu.be/la-0ulfn0_M><br><https://date-fns.org/><br><https://firebase.google.com/docs/firestore/using-console?hl=ko&authuser=0><br><https://about.instagram.com/ko-kr/blog/announcements/introducing-threads-app>
